@@ -11,10 +11,9 @@ import {
   BlankConnectionProps,
   IModelApp,
   IModelConnection,
-  MessageBoxIconType,
-  MessageBoxType,
   SnapshotConnection,
   ViewState,
+  FitViewTool,
 } from "@bentley/imodeljs-frontend";
 import {
   BackstageActionItem,
@@ -32,7 +31,7 @@ import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 
 import { useTheme, useUiProviders } from "../../hooks";
-import { BaseInitializer } from "../../services/BaseInitializer";
+//import { BaseInitializer } from "../../services/BaseInitializer";
 import {
   getDefaultViewIds,
   openRemoteImodel,
@@ -183,43 +182,63 @@ const Loader: React.FC<ModelLoaderProps> = React.memo(
             onIModelConnected(imodelConnection);
           }
 
-          const viewIds = await getDefaultViewIds(imodelConnection);
-
-          if (viewIds.length === 0 && contextId && iModelId) {
-            // no valid view data in the model. Direct the user to the synchronization portal
-            const msgDiv = document.createElement("div");
-            const msg = await BaseInitializer.getIModelDataErrorMessage(
-              contextId,
-              iModelId,
-              IModelApp.i18n.translateWithNamespace(
-                "iTwinViewer",
-                "iModels.emptyIModelError"
-              )
-            );
-            msgDiv.innerHTML = msg;
-            // this can and should be async. No need to wait on it
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            IModelApp.notifications.openMessageBox(
-              MessageBoxType.Ok,
-              msgDiv,
-              MessageBoxIconType.Critical
-            );
+          let viewId: string | undefined = await getDefaultViewIds(imodelConnection);
+          if (viewId !== undefined) {
+            try {
+              await imodelConnection.views.load(viewId);
+            } catch (e) {
+              console.error(
+                "Problem loading default view, creating default view instead: " + e,
+              );
+              // If we fail, just keep going
+              viewId = undefined;
+            }
           }
+
+          viewId = undefined;
 
           // attempt to construct a default viewState
           const savedViewState = await ViewCreator.createDefaultView(
             imodelConnection,
             undefined,
-            viewIds.length > 0 ? viewIds[0] : undefined
+            viewId !== undefined ? viewId : undefined
           );
+
+          //console.log(savedViewState);
 
           // Should not be undefined
           if (!savedViewState) {
             throw new Error("No default view state for the imodel!");
           }
 
+            // console.log(IModelApp.viewManager.getFirstOpenView())
+            // // Set Isometric and Fit View
+            // if (IModelApp.viewManager.getFirstOpenView() !== undefined) {
+            //   (IModelApp.viewManager.getFirstOpenView() as ScreenViewport).setStandardRotation(StandardViewId.Iso);
+            //   ViewManip.fitView((IModelApp.viewManager.getFirstOpenView() as ScreenViewport), false);
+            //   console.log("fitting vp");
+            // }
+            // Turn on sub-categories
+            // vp.changeCategoryDisplay(categories, true, true);
+
           // Set default view state
           UiFramework.setDefaultViewState(savedViewState);
+
+          //const categories = await ViewCreator.getAllCategories(imodelConnection);
+          //Setup an action so that we fit the view when going into the frontstage
+          const setupViewports = async () => {
+            //IModelApp.viewManager.forEachViewport((vp) => {
+              // Set Isometric and Fit View
+              //IModelApp.viewManager._viewports.setStandardRotation(StandardViewId.Iso);
+              //ViewManip.fitView(IModelApp.viewManager._viewports, false);
+              //console.log("fitting vp")
+              // Turn on sub-categories
+              // vp.changeCategoryDisplay(categories, true, true);
+              //IModelApp.tools.run(FitViewTool.toolId, IModelApp.viewManager.selectedView, true);
+
+              IModelApp.tools.run(FitViewTool.toolId, IModelApp.viewManager._viewports[0], true);
+            //});
+          };
 
           // TODO revist for snapshots once settings are removed
           if (!snapshotPath) {
@@ -227,8 +246,9 @@ const Loader: React.FC<ModelLoaderProps> = React.memo(
           }
 
           setViewState(savedViewState);
-
+          setupViewports();
           setConnected(true);
+          //console.log('setup');
         }
       };
 
@@ -337,9 +357,9 @@ const Loader: React.FC<ModelLoaderProps> = React.memo(
       return (
         <div className="itwin-viewer-container">
           {finalFrontstages &&
-          finalBackstageItems &&
-          connected &&
-          StateManager.store ? (
+            finalBackstageItems &&
+            connected &&
+            StateManager.store ? (
             <Provider store={StateManager.store}>
               <IModelViewer
                 frontstages={finalFrontstages}

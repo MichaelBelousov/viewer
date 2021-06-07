@@ -89,11 +89,11 @@ export const openRemoteImodel = async (
  */
 export const getDefaultViewIds = async (
   imodel: IModelConnection
-): Promise<Id64String[]> => {
+): Promise<Id64String> => {
   // check for a default view first
   const defaultViewId = await imodel.views.queryDefaultViewId();
   if (defaultViewId && Id64.isValidId64(defaultViewId)) {
-    return [defaultViewId];
+    return defaultViewId;
   }
 
   const viewSpecs = await imodel.views.queryProps({});
@@ -102,10 +102,10 @@ export const getDefaultViewIds = async (
     (spec) => acceptedViewClasses.indexOf(spec.classFullName) !== -1
   );
   if (acceptedViewSpecs.length < 1) {
-    return [];
+    return "";
   }
   const ids = acceptedViewSpecs.map((spec) => {
     return spec.id as Id64String;
   });
-  return ids;
+  return ids[0];
 };

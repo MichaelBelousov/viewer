@@ -53,7 +53,7 @@ export class ViewCreator {
     if (!viewDefId) {
       return viewStateProps;
     }
-
+    
     const seedViewState = (await iModelConnection.views.load(
       viewDefId
     )) as SpatialViewState;
