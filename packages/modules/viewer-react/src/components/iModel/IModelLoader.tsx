@@ -2,6 +2,10 @@
  * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 
 import "@bentley/icons-generic-webfont/dist/bentley-icons-generic-webfont.css";
 import "./IModelLoader.scss";
@@ -165,7 +169,7 @@ const Loader: React.FC<ModelLoaderProps> = React.memo(
         // create a new imodelConnection for the passed project and imodel ids
         // TODO add the ability to open a BriefcaseConnection for Electron apps
         if (snapshotPath) {
-          imodelConnection = await SnapshotConnection.openFile(snapshotPath);
+          imodelConnection = await SnapshotConnection.openRemote(snapshotPath);
         } else if (contextId && iModelId) {
           imodelConnection = await openRemoteImodel(
             contextId,
