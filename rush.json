@@ -64,6 +64,11 @@
       "packageName": "@itwin/desktop-viewer-test",
       "projectFolder": "packages/apps/desktop-viewer-test",
       "shouldPublish": false
+    },
+    {
+      "packageName": "@bentley/tree-widget-react",
+      "projectFolder": "packages/modules/tree-widget",
+      "shouldPublish": false
     }
   ]
 }

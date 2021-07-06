@@ -8,10 +8,10 @@ import { ColorTheme } from "@bentley/ui-framework";
 import { Viewer } from "@itwin/web-viewer-react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
-
 import { AuthorizationClient } from "../../services/auth";
 import { Header } from "./";
 import styles from "./Home.module.scss";
+import { TreeUiItemsProvider } from "@bentley/tree-widget-react/src/components/TreeUiItemsProvider"
 
 /**
  * Test a viewer that uses a browser authorization client
@@ -25,7 +25,6 @@ export const AuthClientHome: React.FC = () => {
   );
 
   const [oidcInitialized, setOidcInitialized] = useState(false);
-
   const location = useLocation();
 
   useEffect(() => {
@@ -76,6 +75,7 @@ export const AuthClientHome: React.FC = () => {
           iModelId={process.env.IMJS_AUTH_CLIENT_IMODEL_ID as string}
           appInsightsKey={process.env.IMJS_APPLICATION_INSIGHTS_KEY}
           theme={ColorTheme.Dark}
+          uiProviders={[new TreeUiItemsProvider()]}
         />
       )}
     </div>
