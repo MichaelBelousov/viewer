@@ -4,14 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IModelApp } from "@bentley/imodeljs-frontend";
+import { TreeUiItemsProvider } from "@bentley/tree-widget-react";
 import { ColorTheme } from "@bentley/ui-framework";
 import { Viewer } from "@itwin/web-viewer-react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
+
 import { AuthorizationClient } from "../../services/auth";
 import { Header } from "./";
 import styles from "./Home.module.scss";
-import { TreeUiItemsProvider } from "@bentley/tree-widget-react/src/components/TreeUiItemsProvider"
 
 /**
  * Test a viewer that uses a browser authorization client

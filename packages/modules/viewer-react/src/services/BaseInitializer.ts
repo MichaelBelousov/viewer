@@ -18,7 +18,7 @@ import { UrlDiscoveryClient } from "@bentley/itwin-client";
 import { PresentationRpcInterface } from "@bentley/presentation-common";
 import { Presentation } from "@bentley/presentation-frontend";
 import { PropertyGridManager } from "@bentley/property-grid-react";
-import { TreeWidget } from "@bentley/tree-widget-react";
+// import { TreeWidget } from "@bentley/tree-widget-react";
 import { UiComponents } from "@bentley/ui-components";
 import { UiCore } from "@bentley/ui-core";
 import {
@@ -217,7 +217,7 @@ export class BaseInitializer {
 
         await PropertyGridManager.initialize(IModelApp.i18n);
 
-        await TreeWidget.initialize(IModelApp.i18n);
+        // await TreeWidget.initialize(IModelApp.i18n);
 
         // override the default data error message
         this._iModelDataErrorMessage = viewerOptions?.iModelDataErrorMessage;
