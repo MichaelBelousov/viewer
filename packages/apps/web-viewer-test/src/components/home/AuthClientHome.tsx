@@ -3,9 +3,9 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-import { IModelApp } from "@bentley/imodeljs-frontend";
-import { TreeUiItemsProvider } from "@bentley/tree-widget-react";
-import { ColorTheme } from "@bentley/ui-framework";
+import { IModelApp, IModelConnection } from "@bentley/imodeljs-frontend";
+import { TreeUiItemsProvider, TreeWidget, TreeWidgetControlOptions } from "@bentley/tree-widget-react";
+import { ColorTheme, UiFramework } from "@bentley/ui-framework";
 import { Viewer } from "@itwin/web-viewer-react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
@@ -22,7 +22,7 @@ export const AuthClientHome: React.FC = () => {
   const [loggedIn, setLoggedIn] = useState(
     (IModelApp.authorizationClient?.hasSignedIn &&
       IModelApp.authorizationClient?.isAuthorized) ||
-      false
+    false
   );
 
   const [oidcInitialized, setOidcInitialized] = useState(false);
@@ -36,7 +36,7 @@ export const AuthClientHome: React.FC = () => {
           setLoggedIn(
             IModelApp.authorizationClient
               ? IModelApp.authorizationClient.hasSignedIn &&
-                  IModelApp.authorizationClient.isAuthorized
+              IModelApp.authorizationClient.isAuthorized
               : false
           );
         })
@@ -48,7 +48,7 @@ export const AuthClientHome: React.FC = () => {
       setLoggedIn(
         IModelApp.authorizationClient
           ? IModelApp.authorizationClient.hasSignedIn &&
-              IModelApp.authorizationClient.isAuthorized
+          IModelApp.authorizationClient.isAuthorized
           : false
       );
     }
@@ -59,12 +59,14 @@ export const AuthClientHome: React.FC = () => {
       await AuthorizationClient.signIn(location.pathname);
       setLoggedIn(
         AuthorizationClient.oidcClient.hasSignedIn &&
-          AuthorizationClient.oidcClient.isAuthorized
+        AuthorizationClient.oidcClient.isAuthorized
       );
     } else {
       await AuthorizationClient.signOut(location.pathname);
     }
   };
+
+  const treeProps: TreeWidgetControlOptions = {iModelConnection: UiFramework.getIModelConnection() as IModelConnection}
 
   return (
     <div className={styles.home}>
@@ -76,7 +78,8 @@ export const AuthClientHome: React.FC = () => {
           iModelId={process.env.IMJS_AUTH_CLIENT_IMODEL_ID as string}
           appInsightsKey={process.env.IMJS_APPLICATION_INSIGHTS_KEY}
           theme={ColorTheme.Dark}
-          uiProviders={[new TreeUiItemsProvider()]}
+          onIModelAppInit={()=>{TreeWidget.initialize(IModelApp.i18n)}}
+          uiProviders={[new TreeUiItemsProvider(treeProps)]}
         />
       )}
     </div>
