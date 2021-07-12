@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IModelApp, IModelConnection } from "@bentley/imodeljs-frontend";
-import { TreeUiItemsProvider, TreeWidget, TreeWidgetControlOptions } from "@bentley/tree-widget-react";
+import { TreeWidgetUiItemsProvider, TreeWidget, TreeWidgetControlOptions } from "@bentley/tree-widget-react";
 import { ColorTheme, UiFramework } from "@bentley/ui-framework";
 import { Viewer } from "@itwin/web-viewer-react";
 import React, { useEffect, useState } from "react";
@@ -66,8 +66,6 @@ export const AuthClientHome: React.FC = () => {
     }
   };
 
-  const treeProps: TreeWidgetControlOptions = {iModelConnection: UiFramework.getIModelConnection() as IModelConnection}
-
   return (
     <div className={styles.home}>
       <Header handleLoginToggle={toggleLogin} loggedIn={loggedIn} />
@@ -79,7 +77,7 @@ export const AuthClientHome: React.FC = () => {
           appInsightsKey={process.env.IMJS_APPLICATION_INSIGHTS_KEY}
           theme={ColorTheme.Dark}
           onIModelAppInit={()=>{TreeWidget.initialize(IModelApp.i18n)}}
-          uiProviders={[new TreeUiItemsProvider(treeProps)]}
+          uiProviders={[new TreeWidgetUiItemsProvider()]}
         />
       )}
     </div>
